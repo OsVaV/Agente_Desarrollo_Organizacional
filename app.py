@@ -156,12 +156,13 @@ if pregunta_alumno:
     with st.chat_message("user", avatar="👤"):
         st.markdown(pregunta_alumno)
     
-    # 2. Generar y mostrar la respuesta del Director
+  # 2. Generar y mostrar la respuesta del Director con Streaming (Ultrarrápido)
     with st.chat_message("assistant", avatar="🏢"):
-        with st.spinner("Analizando protocolos..."):
-            respuesta = qa_chain.invoke(pregunta_alumno)
-            st.markdown(respuesta)
-            st.session_state.mensajes_chat.append({"role": "assistant", "content": respuesta})
+        # Ejecuta la cadena en modo streaming y escribe los tokens en tiempo real
+        respuesta = st.write_stream(qa_chain.stream(pregunta_alumno))
+        
+    # Guardar la respuesta completa en el historial
+    st.session_state.mensajes_chat.append({"role": "assistant", "content": respuesta})
 
 # --- 9. BOTÓN DE RECOMPENSA (Lógica de Juego) ---
 # Se dibuja solo si hay al menos una interacción
