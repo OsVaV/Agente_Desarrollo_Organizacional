@@ -163,6 +163,19 @@ if pregunta_alumno:
         
     # Guardar la respuesta completa en el historial
     st.session_state.mensajes_chat.append({"role": "assistant", "content": respuesta})
+    
+    # El Escudo Protector contra límites de cuota (Capa Gratuita)
+    try:
+        with st.chat_message("assistant", avatar="🏢"):
+            respuesta = st.write_stream(qa_chain.stream(pregunta_alumno))
+            st.session_state.mensajes_chat.append({"role": "assistant", "content": respuesta})
+            
+    except Exception as e:
+        # Verifica si el error es por límite de peticiones (429)
+        if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+            st.warning("⏳ Límite de procesamiento corporativo alcanzado. Por favor, reflexiona sobre el caso y espera 1 minuto entero antes de enviar tu siguiente análisis.")
+        else:
+            st.warning("⚠️ El corporativo está experimentando intermitencias. Por favor, espera 30 segundos y vuelve a intentarlo.")
 
 # --- 9. BOTÓN DE RECOMPENSA (Lógica de Juego) ---
 # Se dibuja solo si hay al menos una interacción
